@@ -1,0 +1,99 @@
+<script src = "https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<html>
+    <h1>KPIs</h1>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                 <th style="text-align:center;width:100px">Cost</th>
+                 <th style="text-align:center;width:100px">Schedule</th>
+                 <th style="text-align:center;width:100px">Work</th>
+               </tr>
+             </thead>
+             <tbody>
+               <td style="width:100px;text-align:center">
+                 <img id="kpiCost" style="max-width:40px;max-height:40px" src="" />
+               </td>
+               <td style="width:100px;text-align:center">
+                 <img id="kpiSchedule" style="max-width:40px;max-height:40px" src="" />
+               </td>
+               <td style="width:100px;text-align:center">
+                 <img id="kpiWork" style="max-width:40px;max-height:40px" src="" />
+               </td>
+        </table>
+    </div>
+    <script type="text/javascript">
+        let currentSiteUrl = document.URL.split("/");
+        let isPDP = (currentSiteUrl.indexOf("Project%20Detail%20Pages")!= -1)? true: false;
+        if(isPDP){
+            let id = document.URL.split('?')[1].split('&')[0].split('=')[1];
+            let site = document.URL.toLowerCase().split('project')[0];
+            let data = $.ajax({
+                url: site + "/_api/ProjectData/[en-US]/Projects(guid'" + id +"')",
+                type: "GET",
+                dataType: "json",
+                headers: { Accept: "application/json;odata=verbose" },
+                success: function (data) {
+                    let completo = 0;
+                    $.each(data, function (index, element) {
+                        let strS = element._SSlipProject;
+                        if(strS == "No Baseline") {
+                            strS = "Gray";
+                        } else {
+                            let nS = strS.search(" ");
+                            strS = strS.substr(0, nS);
+                            strS = strS.trim();
+                        }
+                        if(strS == "Gray") {
+                            $('#kpiSchedule')[0].src = site + "/_layouts/15/inc/PWA/images/cf_11p.png";
+                        } else if (strS == "Green") {
+                            $('#kpiSchedule')[0].src = site + "/_layouts/15/inc/PWA/images/cf_6p.png";
+                        } else if (strS == "Yellow") {
+                            $('#kpiSchedule')[0].src = site + "/_layouts/15/inc/PWA/images/cf_1p.png";
+                        } else if (strS == "Red") {
+                            $('#kpiSchedule')[0].src = site + "/_layouts/15/inc/PWA/images/cf_2p.png";
+                        }
+                        let strW = element._WSlipProject;
+                        if(strW == "No Baseline") {
+                            strW = "Gray";
+                        } else {
+                            let nW = strW.search(" ");
+                            strW = strW.substr(0, nW);
+                            strW = strW.trim();
+                        }
+                        if(strW == "Gray") {
+                            $('#kpiWork')[0].src = site + "/_layouts/15/inc/PWA/images/cf_11p.png";
+                        } else if (strW == "Green") {
+                            $('#kpiWork')[0].src = site + "/_layouts/15/inc/PWA/images/cf_6p.png";
+                        } else if (strW == "Yellow") {
+                            $('#kpiWork')[0].src = site + "/_layouts/15/inc/PWA/images/cf_1p.png";
+                        } else if (strW == "Red") {
+                            $('#kpiWork')[0].src = site + "/_layouts/15/inc/PWA/images/cf_2p.png";
+                        }
+                        let strC = element._CSlipProject;
+                        if(strC == "No Baseline") {
+                            strC = "Gray";
+                        } else {
+                            var nC = strC.search(' ');
+                            strC = strC.substr(0, nC);
+                            strC = strC.trim();
+                        }
+                        if(strC == "Gray") {
+                            $('#kpiCost')[0].src = site + "/_layouts/15/inc/PWA/images/cf_11p.png";
+                        } else if (strC == "Green") {
+                            $('#kpiCost')[0].src = site + "/_layouts/15/inc/PWA/images/cf_6p.png";
+                        } else if (strC == "Yellow") {
+                            $('#kpiCost')[0].src = site + "/_layouts/15/inc/PWA/images/cf_1p.png";
+                        } else if (strC == "Red") {
+                            $('#kpiCost')[0].src = site + "/_layouts/15/inc/PWA/images/cf_2p.png";
+                        }
+                    });
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status);
+                    alert(thrownError);
+                }
+            })
+        }
+    </script>
+</html>
